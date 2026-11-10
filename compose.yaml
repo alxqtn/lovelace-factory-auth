@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: lovelace_factory
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+      - ./backend/db/migrations:/docker-entrypoint-initdb.d:ro
+
+  # Base de test : jetable (tmpfs), recréée à chaque démarrage avec les migrations
+  db-test:
+    image: postgres:18
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: lovelace_factory_test
+    ports:
+      - "127.0.0.1:5433:5432"
+    tmpfs:
+      - /var/lib/postgresql
+    volumes:
+      - ./backend/db/migrations:/docker-entrypoint-initdb.d:ro
+
+volumes:
+  pgdata:
